@@ -1,95 +1,83 @@
+"use client";
+
 import Image from "next/image";
 import styles from "./page.module.css";
+import { Typography, Stack, Tab, Box } from "@mui/material";
+import { TabList, TabPanel, TabContext } from "@mui/lab";
+import { useState } from "react";
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [value, setValue] = useState("1");
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  return (
+    <Stack className={styles.page} alignItems="center" spacing={2}>
+      <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+        Movie Tracker
+      </Typography>
+      <Box sx={{ width: "100%", maxWidth: 600 }}>
+        <TabContext value={value}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-around",
+              borderBottom: 1,
+              borderColor: "divider",
+              backgroundColor: "#f5f5f5",
+              borderRadius: "8px 8px 0 0",
+            }}
           >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
+            <TabList onChange={handleChange} aria-label="Movie Tracker Tabs">
+              <Tab
+                label="Search Movies"
+                value="1"
+                sx={{
+                  fontWeight: "bold",
+                  color: value === "1" ? "primary.main" : "text.secondary",
+                  padding: "12px 16px",
+                  borderBottom: value === "1" ? "2px solid #1976d2" : "none",
+                }}
+              />
+              <Tab
+                label="Watched Movies"
+                value="2"
+                sx={{
+                  fontWeight: "bold",
+                  color: value === "2" ? "primary.main" : "text.secondary",
+                  padding: "12px 16px",
+                  borderBottom: value === "2" ? "2px solid #1976d2" : "none",
+                }}
+              />
+              <Tab
+                label="Watch List"
+                value="3"
+                sx={{
+                  fontWeight: "bold",
+                  color: value === "3" ? "primary.main" : "text.secondary",
+                  padding: "12px 16px",
+                  borderBottom: value === "3" ? "2px solid #1976d2" : "none",
+                }}
+              />
+            </TabList>
+          </Box>
+          <Box
+            sx={{
+              padding: "24px",
+              border: "1px solid #ddd",
+              borderTop: "none",
+              borderRadius: "0 0 8px 8px",
+              backgroundColor: "white",
+            }}
           >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            <TabPanel value="1">Search for a movie...</TabPanel>
+            <TabPanel value="2">List of watched movies...</TabPanel>
+            <TabPanel value="3">Your watch list...</TabPanel>
+          </Box>
+        </TabContext>
+      </Box>
+    </Stack>
   );
 }
