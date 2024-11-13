@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import styles from "./page.module.css";
 import { Typography, Stack, Tab, Box } from "@mui/material";
 import { TabList, TabPanel, TabContext } from "@mui/lab";
 import { useState } from "react";
+import Movies from "@/Components/Movies";
 
 export default function Home() {
   const [value, setValue] = useState("1");
@@ -14,9 +14,14 @@ export default function Home() {
   };
 
   return (
-    <Stack className={styles.page} alignItems="center" spacing={2}>
+    <Stack
+      spacing={2}
+      sx={{
+        padding: "30px",
+      }}
+    >
       <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-        Movie Tracker
+        WatchMark
       </Typography>
       <Box sx={{ width: "100%", maxWidth: 600 }}>
         <TabContext value={value}>
@@ -39,6 +44,7 @@ export default function Home() {
                   color: value === "1" ? "primary.main" : "text.secondary",
                   padding: "12px 16px",
                   borderBottom: value === "1" ? "2px solid #1976d2" : "none",
+                  textTransform: "none",
                 }}
               />
               <Tab
@@ -49,6 +55,7 @@ export default function Home() {
                   color: value === "2" ? "primary.main" : "text.secondary",
                   padding: "12px 16px",
                   borderBottom: value === "2" ? "2px solid #1976d2" : "none",
+                  textTransform: "none",
                 }}
               />
               <Tab
@@ -59,20 +66,21 @@ export default function Home() {
                   color: value === "3" ? "primary.main" : "text.secondary",
                   padding: "12px 16px",
                   borderBottom: value === "3" ? "2px solid #1976d2" : "none",
+                  textTransform: "none",
                 }}
               />
             </TabList>
           </Box>
           <Box
             sx={{
+              
               padding: "24px",
-              border: "1px solid #ddd",
-              borderTop: "none",
               borderRadius: "0 0 8px 8px",
-              backgroundColor: "white",
             }}
           >
-            <TabPanel value="1">Search for a movie...</TabPanel>
+            <TabPanel value="1">
+              <Movies />
+            </TabPanel>
             <TabPanel value="2">List of watched movies...</TabPanel>
             <TabPanel value="3">Your watch list...</TabPanel>
           </Box>
