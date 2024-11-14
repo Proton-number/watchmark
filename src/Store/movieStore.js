@@ -7,7 +7,7 @@ export const useMovieStore = create((set) => ({
     try {
       console.log("Fetching movies...");
       const response = await fetch(
-        `https://api.themoviedb.org/3/movie/popular?api_key=080f0c4a5368b224d7e7170975a17847`
+        `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

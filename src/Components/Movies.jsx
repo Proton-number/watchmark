@@ -1,9 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Typography, Box } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
+} from "@mui/material";
 import { useMovieStore } from "@/Store/movieStore";
 import Image from "next/image";
-
 
 function Movies() {
   const { fetchMovies, movies } = useMovieStore();
@@ -39,19 +45,35 @@ function Movies() {
         flexDirection: "column",
       }}
     >
-      {movies.map((movie, index) => (
-        <div key={index}>
-          <Image
-            src={movie.poster_path}
-            alt={movie.title}
-            width={500}
-            height={750}
-            className="w-full h-auto"
-          />
-          <h2>{movie.title}</h2>
-          {/* Add other movie details */}
-        </div>
-      ))}
+      <Grid container spacing={4} justifyContent="center">
+        {movies.map((movie, index) => {
+          const posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+          return (
+            // Use return here to ensure JSX is rendered
+            <Grid item key={index} xs={10} sm={6} md={4} lg={3}>
+              <Card>
+                <Image
+                  src={posterUrl}
+                  alt={movie.title || "No title"}
+                  width={300}
+                  height={350}
+                />
+                <CardContent>
+                  <h2>{movie.title || "Untitled"}</h2>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 1 }}
+                  >
+                    {movie.release_date?.split("-")[0] || "N/A"}
+                  </Typography>
+                </CardContent>
+                {/* Add other movie details */}
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
     </Box>
   );
 }
