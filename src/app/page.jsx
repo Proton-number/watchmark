@@ -66,7 +66,7 @@ export default function Home() {
                 disableRipple
               />
               <Tab
-                label="Watched Movies"
+                label="Watched Movies (0)"
                 value="2"
                 sx={{
                   fontWeight: "bold",
@@ -81,7 +81,7 @@ export default function Home() {
               />
 
               <Tab
-                label="Watch List"
+                label="Watch List (0)"
                 value="3"
                 sx={{
                   fontWeight: "bold",

@@ -7,13 +7,15 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Button,
 } from "@mui/material";
 import { useMovieStore } from "@/Store/movieStore";
 import Image from "next/image";
 
 function Movies() {
-  const { fetchMovies, movies } = useMovieStore();
+  const { fetchMovies, movies, page, hasMore } = useMovieStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +29,19 @@ function Movies() {
     };
     fetchData();
   }, [fetchMovies]);
+
+  const loadMoreMovies = async () => {
+    if (hasMore && !isLoadingMore) {
+      setIsLoadingMore(true);
+      try {
+        await fetchMovies(page + 1); // Fetch the next page
+      } catch (error) {
+        console.error("Error loading more movies:", error);
+      } finally {
+        setIsLoadingMore(false);
+      }
+    }
+  };
 
   if (isLoading) {
     return <div>Loading movies...</div>;
@@ -90,6 +105,23 @@ function Movies() {
           );
         })}
       </Grid>
+      {hasMore && (
+        <Button
+          variant="contained"
+          onClick={loadMoreMovies}
+          disabled={isLoadingMore}
+          sx={{
+            mt: 4,
+            textTransform: "none",
+            fontSize: "14px",
+            fontWeight: "bold",
+            backgroundColor: "white",
+            color:"black"
+          }}
+        >
+          {isLoadingMore ? "Loading..." : "Load More"}
+        </Button>
+      )}
     </Box>
   );
 }
