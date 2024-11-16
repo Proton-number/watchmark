@@ -51,13 +51,29 @@ function Movies() {
           return (
             // Use return here to ensure JSX is rendered
             <Grid item key={index} xs={10} sm={6} md={4} lg={3}>
-              <Card>
-                <Image
-                  src={posterUrl}
-                  alt={movie.title || "No title"}
-                  width={300}
-                  height={350}
-                />
+              <Card
+                sx={{
+                  height: "100%", // Ensure cards are of equal height
+                }}
+              >
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: "100%",
+                    paddingTop: "150%", // Aspect ratio for images (e.g., 2:3)
+                  }}
+                >
+                  <Image
+                    src={posterUrl}
+                    alt={movie.title || "No title"}
+                    fill
+                    style={{
+                      objectPosition: "top",
+                      objectFit: "cover",
+                      borderRadius: "4px 4px 0 0",
+                    }} // Cover to maintain aspect ratio
+                  />
+                </Box>
                 <CardContent>
                   <h2>{movie.title || "Untitled"}</h2>
                   <Typography

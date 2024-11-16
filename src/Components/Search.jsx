@@ -9,8 +9,12 @@ function Search() {
       spacing={2}
       sx={{ marginBottom: "20px", alignItems: "Center" }}
     >
-      <TextField placeholder="Search for a movie..." sx={{ width: "50%" }} />
-      <Box sx={{ backgroundColor: "#282f3c" }}>
+      <TextField
+        placeholder="Search for a movie..."
+        size="small"
+        sx={{ width: { sm: "80%", lg: "45%" } }}
+      />
+      <Box sx={{ backgroundColor: "#282f3c", borderRadius: "4px" }}>
         <IconButton>
           <SearchIcon sx={{ color: "white" }} />
         </IconButton>
