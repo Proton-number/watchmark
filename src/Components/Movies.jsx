@@ -6,14 +6,15 @@ import {
   Grid,
   Card,
   CardContent,
-  CardMedia,
   Button,
 } from "@mui/material";
 import { useMovieStore } from "@/Store/movieStore";
 import Image from "next/image";
+import Link from "next/link";
 
 function Movies() {
-  const { fetchMovies, movies, page, hasMore } = useMovieStore();
+  const { fetchMovies, movies, page, hasMore, addtoWatched, addToWatchList } =
+    useMovieStore();
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -62,7 +63,9 @@ function Movies() {
     >
       <Grid container spacing={4} justifyContent="center">
         {movies.map((movie, index) => {
-          const posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+          const posterUrl = movie.poster_path
+            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+            : "/placeholder.png";
           return (
             // Use return here to ensure JSX is rendered
             <Grid item key={index} xs={10} sm={6} md={4} lg={3}>
@@ -81,25 +84,39 @@ function Movies() {
                   <Image
                     src={posterUrl}
                     alt={movie.title || "No title"}
-                    fill
+                    fill // Fill the entire container
+                    priority // Prioritize image loading by pre loading
+                    sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw" // Responsive image sizing
                     style={{
-                      objectPosition: "top",
+                      objectPosition: "top", // Position the image
                       objectFit: "cover",
                       borderRadius: "4px 4px 0 0",
                     }} // Cover to maintain aspect ratio
                   />
                 </Box>
-                <CardContent>
-                  <h2>{movie.title || "Untitled"}</h2>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 1 }}
-                  >
-                    {movie.release_date?.split("-")[0] || "N/A"}
-                  </Typography>
-                </CardContent>
+                <Link href={`/Movies/${movie.id}`}>
+                  <CardContent>
+                    <h2>{movie.title || "Untitled"}</h2>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mt: 1 }}
+                    >
+                      {movie.release_date?.split("-")[0] || "N/A"}
+                      {/* Display release year */}
+                    </Typography>
+                    <Typography>
+                      Lang(uage: {movie.original_language}
+                    </Typography>
+                  </CardContent>
+                </Link>
                 {/* Add other movie details */}
+                <Button onClick={() => addtoWatched(movie)}>
+                  Add to watched
+                </Button>
+                <Button onClick={() => addToWatchList(movie)}>
+                  Add to watch list
+                </Button>
               </Card>
             </Grid>
           );
@@ -116,7 +133,7 @@ function Movies() {
             fontSize: "14px",
             fontWeight: "bold",
             backgroundColor: "white",
-            color:"black"
+            color: "black",
           }}
         >
           {isLoadingMore ? "Loading..." : "Load More"}

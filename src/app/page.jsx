@@ -8,6 +8,7 @@ import Movies from "@/Components/Movies";
 import Watched from "@/Components/Watched";
 import WatchList from "@/Components/WatchList";
 import Search from "@/Components/Search";
+import { useMovieStore } from "@/Store/movieStore";
 
 export default function Home() {
   const [value, setValue] = useState("1");
@@ -15,6 +16,8 @@ export default function Home() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const { watchedCount, watchListCount } = useMovieStore();
 
   return (
     <Stack
@@ -66,7 +69,7 @@ export default function Home() {
                 disableRipple
               />
               <Tab
-                label="Watched Movies (0)"
+                label={`Watched Movies (${watchedCount})`}
                 value="2"
                 sx={{
                   fontWeight: "bold",
@@ -81,7 +84,7 @@ export default function Home() {
               />
 
               <Tab
-                label="Watch List (0)"
+                label={`Watch List (${watchListCount})`}
                 value="3"
                 sx={{
                   fontWeight: "bold",
