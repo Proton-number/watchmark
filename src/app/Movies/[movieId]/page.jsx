@@ -2,7 +2,17 @@
 
 import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Paper,
+  Stack,
+  Container,
+  Button,
+} from "@mui/material";
+import Image from "next/image";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 
 function page() {
   const { movieId } = useParams();
@@ -41,12 +51,75 @@ function page() {
     return <div>Movie not found.</div>;
   }
 
+  const posterUrl = movieData.poster_path
+    ? `https://image.tmdb.org/t/p/w500${movieData.poster_path}`
+    : "/placeholder.png";
+
+  // Extract genres as a comma-separated string
+  const genres = movieData.genres
+    ? movieData.genres.map((genre) => genre.name).join(", ")
+    : "Unknown";
+
   return (
-    <div>
-      <Typography variant="h4" gutterBottom>
-        {movieData?.title || "Untitled"}
-      </Typography>
-    </div>
+    <Container
+      sx={{
+        padding: "80px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Paper sx={{ padding: "50px" }} elevation={4}>
+        <Stack spacing={{ lg: 5 }} direction={{ sm: "row" }}>
+          <Image
+            src={posterUrl}
+            alt={movieData.title || "No title"}
+            width={400}
+            height={600}
+          />
+
+          <Stack spacing={{ lg: 2 }}>
+            <Typography variant="h3">
+              <strong>{movieData?.title || "Untitled"}</strong>
+            </Typography>
+            <Stack direction="row" sx={{ alignItems: "center" }} spacing={1}>
+              <Stack direction="row" sx={{ alignItems: "center" }} spacing={1}>
+                <StarBorderIcon sx={{ color: "gold" }} />
+                <Typography>
+                  {movieData.vote_average} ({movieData.vote_count} votes)
+                </Typography>
+              </Stack>
+              <Stack direction="row" sx={{ alignItems: "center" }} spacing={1}>
+                <CalendarMonthIcon />
+                <Typography>
+                  {new Date(movieData.release_date).getFullYear()}
+                </Typography>
+              </Stack>
+            </Stack>
+            <Typography>
+              <strong>Genre: </strong>
+              {genres}
+            </Typography>
+            <Typography>{movieData.overview}</Typography>
+
+            <Stack>
+              <Button
+                variant="contained"
+                sx={{
+                  width: "fit-content",
+                  textTransform: "none",
+                  backgroundColor: "black",
+                  "&:hover": { backgroundColor: "hsl(219, 20%, 20%)" },
+                }}
+                disableElevation
+              >
+                Add to Watchlist
+              </Button>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Paper>
+    </Container>
   );
 }
 
