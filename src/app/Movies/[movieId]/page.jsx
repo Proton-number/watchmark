@@ -86,7 +86,8 @@ function page() {
               <Stack direction="row" sx={{ alignItems: "center" }} spacing={1}>
                 <StarBorderIcon sx={{ color: "gold" }} />
                 <Typography>
-                  {movieData.vote_average} ({movieData.vote_count} votes)
+                  {movieData.vote_average.toFixed(1)} ({movieData.vote_count}{" "}
+                  votes)
                 </Typography>
               </Stack>
               <Stack direction="row" sx={{ alignItems: "center" }} spacing={1}>
