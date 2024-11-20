@@ -13,11 +13,13 @@ import {
 import Image from "next/image";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { useMovieStore } from "@/Store/movieStore";
 
 function page() {
   const { movieId } = useParams();
   const [movieData, setMovieData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { addToWatchList } = useMovieStore();
   useEffect(() => {
     // fetch movie data from API
     const fetchDetails = async () => {
@@ -63,22 +65,34 @@ function page() {
   return (
     <Container
       sx={{
-        padding: "80px",
+        padding: { xs: "50px" },
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        minHeight: "100vh",
       }}
     >
-      <Paper sx={{ padding: "50px" }} elevation={4}>
-        <Stack spacing={{ lg: 5 }} direction={{ sm: "row" }}>
-          <Image
-            src={posterUrl}
-            alt={movieData.title || "No title"}
-            width={400}
-            height={600}
-          />
+      <Paper sx={{ padding: { xs: "40px", sm: "50px" } }} elevation={4}>
+        <Stack spacing={{ xs: 3, sm: 4, lg: 5 }} direction={{ sm: "row" }}>
+          <Box
+            sx={{
+              width: 300,
+              height: 450,
+            }}
+          >
+            <Image
+              src={posterUrl}
+              alt={movieData.title || "No title"}
+              width={300}
+              height={450}
+              style={{
+                objectFit: "cover",
+                borderRadius: "8px",
+              }}
+            />
+          </Box>
 
-          <Stack spacing={{ lg: 2 }}>
+          <Stack spacing={2}>
             <Typography variant="h3">
               <strong>{movieData?.title || "Untitled"}</strong>
             </Typography>
@@ -101,7 +115,9 @@ function page() {
               <strong>Genre: </strong>
               {genres}
             </Typography>
-            <Typography>{movieData.overview}</Typography>
+            <Typography variant="subtitle2" sx={{ opacity: "70%" }}>
+              {movieData.overview}
+            </Typography>
 
             <Stack>
               <Button
@@ -113,6 +129,7 @@ function page() {
                   "&:hover": { backgroundColor: "hsl(219, 20%, 20%)" },
                 }}
                 disableElevation
+                onClick={() => addToWatchList(movieData)}
               >
                 Add to Watchlist
               </Button>
