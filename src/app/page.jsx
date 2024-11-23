@@ -9,6 +9,7 @@ import Watched from "@/Components/Watched";
 import WatchList from "@/Components/WatchList";
 import Search from "@/Components/Search";
 import { useMovieStore } from "@/Store/movieStore";
+import SearchIcon from "@mui/icons-material/Search";
 
 export default function Home() {
   const [value, setValue] = useState("1");
@@ -56,7 +57,16 @@ export default function Home() {
                 textColor="#04768b"
               >
                 <Tab
-                  label="Search Movies"
+                  label={
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      sx={{ alignItems: "center" }}
+                    >
+                      <SearchIcon />
+                      <strong style={{opacity:"78%"}}> Search Movies</strong>
+                    </Stack>
+                  }
                   value="1"
                   sx={{
                     fontWeight: "bold",

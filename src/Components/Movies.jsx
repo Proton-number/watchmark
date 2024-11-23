@@ -14,6 +14,7 @@ import Image from "next/image";
 import Link from "next/link";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AddIcon from "@mui/icons-material/Add";
+import { motion } from "framer-motion";
 
 function Movies() {
   const { fetchMovies, movies, page, hasMore, addtoWatched, addToWatchList } =
@@ -104,9 +105,13 @@ function Movies() {
                 >
                   <Link
                     href={`/Movies/${movie.id}`}
+                    style={{
+                      textDecoration: "none",
+                      color: "inherit",
+                    }}
                   >
                     <Typography variant="h5">
-                      {movie.title || "Untitled"}
+                      <strong> {movie.title || "Untitled"}</strong>
                     </Typography>
                     <Typography
                       variant="body2"
