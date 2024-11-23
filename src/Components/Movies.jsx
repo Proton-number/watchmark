@@ -7,10 +7,13 @@ import {
   Card,
   CardContent,
   Button,
+  Stack,
 } from "@mui/material";
 import { useMovieStore } from "@/Store/movieStore";
 import Image from "next/image";
 import Link from "next/link";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import AddIcon from "@mui/icons-material/Add";
 
 function Movies() {
   const { fetchMovies, movies, page, hasMore, addtoWatched, addToWatchList } =
@@ -72,51 +75,83 @@ function Movies() {
               <Card
                 sx={{
                   height: "100%", // Ensure cards are of equal height
+                  display: "flex", // Flex layout
+                  flexDirection: "column", // Arrange children vertically
                 }}
               >
                 <Box
                   sx={{
                     position: "relative",
                     width: "100%",
-                    paddingTop: "150%", // Aspect ratio for images (e.g., 2:3)
+                    paddingTop: "150%", // Maintain aspect ratio for images
                   }}
                 >
                   <Image
                     src={posterUrl}
                     alt={movie.title || "No title"}
-                    fill // Fill the entire container
-                    priority // Prioritize image loading by pre loading
-                    sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw" // Responsive image sizing
+                    fill // Fills the container
+                    sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw" // Responsive sizing
                     style={{
-                      objectPosition: "top", // Position the image
                       objectFit: "cover",
-                      borderRadius: "4px 4px 0 0",
-                    }} // Cover to maintain aspect ratio
+                      borderRadius: "4px 4px 0 0", // Rounded corners for the image
+                    }}
                   />
                 </Box>
-                <Link href={`/Movies/${movie.id}`}>
-                  <CardContent>
-                    <h2>{movie.title || "Untitled"}</h2>
+                <CardContent
+                  sx={{
+                    flexGrow: 1, // Fills the vertical space
+                  }}
+                >
+                  <Link
+                    href={`/Movies/${movie.id}`}
+                  >
+                    <Typography variant="h5">
+                      {movie.title || "Untitled"}
+                    </Typography>
                     <Typography
                       variant="body2"
                       color="text.secondary"
                       sx={{ mt: 1 }}
                     >
-                      {movie.release_date?.split("-")[0] || "N/A"}
-                      {/* Display release year */}
+                      Language: {movie.original_language}
                     </Typography>
-                    <Typography>
-                      Lang(uage: {movie.original_language}
-                    </Typography>
-                  </CardContent>
-                </Link>
-                {/* Add other movie details */}
-                <Button onClick={() => addtoWatched(movie)}>
-                  Add to watched
-                </Button>
-                <Button onClick={() => addToWatchList(movie)}>
-                  Add to watch list
-                </Button>
+                  </Link>
+                </CardContent>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  sx={{ p: 2, justifyContent: "center" }}
+                >
+                  <Button
+                    startIcon={<AccessTimeIcon />}
+                    variant="contained"
+                    sx={{
+                      textTransform: "none",
+                      backgroundColor: "#050708",
+                      "&:hover": {
+                        backgroundColor: "#282f3c",
+                      },
+                    }}
+                    onClick={() => addtoWatched(movie)}
+                  >
+                    Watched
+                  </Button>
+                  <Button
+                    startIcon={<AddIcon />}
+                    variant="contained"
+                    sx={{
+                      textTransform: "none",
+                      backgroundColor: "#ffffff",
+                      color: "#050708",
+                      "&:hover": {
+                        backgroundColor: "#f3f4f6",
+                      },
+                    }}
+                    onClick={() => addToWatchList(movie)}
+                  >
+                    Watchlist
+                  </Button>
+                </Stack>
               </Card>
             </Grid>
           );

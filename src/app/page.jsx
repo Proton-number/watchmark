@@ -26,7 +26,7 @@ export default function Home() {
         padding: "30px",
       }}
     >
-      <Box sx={{ paddingTop: { lg: "50px" } }}>
+      <Box sx={{ paddingTop: { sm: "50px" } }}>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
           WatchMark
         </Typography>

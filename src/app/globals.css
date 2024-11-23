@@ -3,8 +3,6 @@
   --foreground: #171717;
 }
 
-
-
 body {
   color: var(--foreground);
   background: var(--background);
@@ -19,4 +17,10 @@ body {
   margin: 0;
 }
 
+.cl-internal-1dauvpw {
+  display: none !important;
+}
 
+.cl-internal-d50gl1 {
+  display: none !important;
+}
