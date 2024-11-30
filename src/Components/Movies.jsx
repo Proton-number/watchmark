@@ -89,6 +89,7 @@ function Movies() {
                 >
                   <Image
                     src={posterUrl}
+                    priority
                     alt={movie.title || "No title"}
                     fill // Fills the container
                     sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw" // Responsive sizing

@@ -10,6 +10,7 @@ import WatchList from "@/Components/WatchList";
 import Search from "@/Components/Search";
 import { useMovieStore } from "@/Store/movieStore";
 import SearchIcon from "@mui/icons-material/Search";
+import FirebaseAuthHandler from "@/Config/FirebaseAuthHandler";
 
 export default function Home() {
   const [value, setValue] = useState("1");
@@ -21,114 +22,123 @@ export default function Home() {
   const { watchedCount, watchListCount } = useMovieStore();
 
   return (
-    <Stack
-      spacing={2}
-      sx={{
-        padding: "30px",
-      }}
-    >
-      <Box sx={{ paddingTop: { sm: "50px" } }}>
-        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          WatchMark
-        </Typography>
-        <Box sx={{ width: "100%" }}>
-          <TabContext value={value}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-around",
-                backgroundColor: "#f5f5f5",
-                borderRadius: "8px",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                maxWidth: 600,
-              }}
-            >
-              <TabList
-                onChange={handleChange}
-                aria-label="Movie Tracker Tabs"
+    <>
+      <Stack
+        spacing={2}
+        sx={{
+          padding: "30px",
+        }}
+      >
+        <Box sx={{ paddingTop: { sm: "50px" } }}>
+          <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+            WatchMark
+          </Typography>
+          <Box sx={{ width: "100%" }}>
+            <TabContext value={value}>
+              <Box
                 sx={{
-                  width: "100%",
-                  "& .MuiTabs-indicator": {
-                    display: "none", // Hide default indicator
-                  },
-
-                  padding: "5px",
+                  display: "flex",
+                  justifyContent: "space-around",
+                  backgroundColor: "#f5f5f5",
+                  borderRadius: "8px",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  maxWidth: 600,
                 }}
-                textColor="#04768b"
               >
-                <Tab
-                  label={
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      sx={{ alignItems: "center" }}
-                    >
-                      <SearchIcon />
-                      <strong style={{opacity:"78%"}}> Search Movies</strong>
-                    </Stack>
-                  }
-                  value="1"
+                <TabList
+                  onChange={handleChange}
+                  aria-label="Movie Tracker Tabs"
                   sx={{
-                    fontWeight: "bold",
-                    color: value === "1" ? "black" : "secondary",
-                    backgroundColor: value === "1" ? "#ffffff" : "transparent",
-                    borderRadius: "8px",
-                    padding: "12px 24px",
-                    textTransform: "none",
-                    width: "33.33%", // Evenly space the tabs
-                  }}
-                  disableRipple
-                />
-                <Tab
-                  label={`Watched Movies (${watchedCount})`}
-                  value="2"
-                  sx={{
-                    fontWeight: "bold",
-                    color: value === "2" ? "black" : "text.secondary",
-                    backgroundColor: value === "2" ? "#ffffff" : "transparent",
-                    borderRadius: "8px",
-                    padding: "12px 24px",
-                    textTransform: "none",
-                    width: "33.33%",
-                  }}
-                  disableRipple
-                />
+                    width: "100%",
+                    "& .MuiTabs-indicator": {
+                      display: "none", // Hide default indicator
+                    },
 
-                <Tab
-                  label={`Watch List (${watchListCount})`}
-                  value="3"
-                  sx={{
-                    fontWeight: "bold",
-                    color: value === "3" ? "black" : "text.secondary",
-                    backgroundColor: value === "3" ? "#ffffff" : "transparent",
-                    borderRadius: "8px",
-                    padding: "12px 24px",
-                    textTransform: "none",
-                    width: "33.33%",
+                    padding: "5px",
                   }}
-                  disableRipple
-                />
-              </TabList>
-            </Box>
-            <Box
-              sx={{
-                borderRadius: "0 0 8px 8px",
-              }}
-            >
-              <TabPanel value="1">
-                <Search />
-                <Movies />
-              </TabPanel>
-              <TabPanel value="2">
-                <Watched />
-              </TabPanel>
-              <TabPanel value="3">
-                <WatchList />
-              </TabPanel>
-            </Box>
-          </TabContext>
+                  textColor="#04768b"
+                >
+                  <Tab
+                    label={
+                      <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{ alignItems: "center" }}
+                      >
+                        <SearchIcon />
+                        <strong style={{ opacity: "78%" }}>
+                          {" "}
+                          Search Movies
+                        </strong>
+                      </Stack>
+                    }
+                    value="1"
+                    sx={{
+                      fontWeight: "bold",
+                      color: value === "1" ? "black" : "secondary",
+                      backgroundColor:
+                        value === "1" ? "#ffffff" : "transparent",
+                      borderRadius: "8px",
+                      padding: "12px 24px",
+                      textTransform: "none",
+                      width: "33.33%", // Evenly space the tabs
+                    }}
+                    disableRipple
+                  />
+                  <Tab
+                    label={`Watched Movies (${watchedCount})`}
+                    value="2"
+                    sx={{
+                      fontWeight: "bold",
+                      color: value === "2" ? "black" : "text.secondary",
+                      backgroundColor:
+                        value === "2" ? "#ffffff" : "transparent",
+                      borderRadius: "8px",
+                      padding: "12px 24px",
+                      textTransform: "none",
+                      width: "33.33%",
+                    }}
+                    disableRipple
+                  />
+
+                  <Tab
+                    label={`Watch List (${watchListCount})`}
+                    value="3"
+                    sx={{
+                      fontWeight: "bold",
+                      color: value === "3" ? "black" : "text.secondary",
+                      backgroundColor:
+                        value === "3" ? "#ffffff" : "transparent",
+                      borderRadius: "8px",
+                      padding: "12px 24px",
+                      textTransform: "none",
+                      width: "33.33%",
+                    }}
+                    disableRipple
+                  />
+                </TabList>
+              </Box>
+              <Box
+                sx={{
+                  borderRadius: "0 0 8px 8px",
+                }}
+              >
+                <TabPanel value="1">
+                  <Search />
+                  <Movies />
+                </TabPanel>
+                <TabPanel value="2">
+                  <Watched />
+                </TabPanel>
+                <TabPanel value="3">
+                  <WatchList />
+                </TabPanel>
+              </Box>
+            </TabContext>
+          </Box>
         </Box>
-      </Box>
-    </Stack>
+      </Stack>
+      <FirebaseAuthHandler />
+    </>
   );
 }

@@ -9,6 +9,8 @@ import {
   UserButton,
   SignIn,
 } from "@clerk/nextjs";
+import SignInPage from "@/Components/SignInPage";
+import { app, auth } from "@/Config/Firebase";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,16 +34,7 @@ export default function RootLayout({ children }) {
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable}`}>
           <SignedOut>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: "100vh",
-              }}
-            >
-              <SignIn routing="hash" />
-            </div>
+            <SignInPage />
           </SignedOut>
 
           <SignedIn>

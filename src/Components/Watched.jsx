@@ -69,6 +69,7 @@ export default function Watched() {
                 >
                   <Image
                     src={posterUrl}
+                    priority
                     alt={movie.title || "No title"}
                     fill // Fills the container
                     sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw" // Responsive sizing
@@ -98,7 +99,7 @@ export default function Watched() {
                         {new Date(movie.release_date).getFullYear()}
                       </Typography>
                       <Typography>
-                        Watched: {new Date().toDateString("en-GB")}{" "}
+                        Watched: {new Date().toLocaleDateString("en-GB")}
                       </Typography>
                     </Stack>
                     <Typography>{movie.original_language}</Typography>

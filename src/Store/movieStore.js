@@ -1,3 +1,5 @@
+import { db, auth } from "@/Config/Firebase";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { create } from "zustand";
 
 export const useMovieStore = create((set) => {
@@ -68,7 +70,8 @@ export const useMovieStore = create((set) => {
         throw error;
       }
     },
-    addtoWatched: (movie) => {
+
+    addtoWatched: async (movie) => {
       set((state) => {
         // ".some()" checks if watched.id === movie.id, and if it finds a match, it means the movie is already in the watchedMovies list, so it won't be added again.
         if (state.watchedMovies.some((watched) => watched.id === movie.id)) {
@@ -81,9 +84,26 @@ export const useMovieStore = create((set) => {
           watchedCount: state.watchedCount + 1,
         };
       });
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          console.error("User not logged in");
+          return;
+        }
+
+        // Reference to the user's watchedMovies collection in Firestore
+        const watchedMoviesRef = doc(
+          collection(db, "users", user.uid, "watchedMovies"),
+          movie.id.toString() // Use movie ID as the document ID
+        );
+        await setDoc(watchedMoviesRef, movie);
+        console.log("Movie added to Firestore watchedMovies collection");
+      } catch (error) {
+        console.error("Error adding movie to Firestore:", error);
+      }
     },
 
-    addToWatchList: (movie) => {
+    addToWatchList: async (movie) => {
       set((state) => {
         if (state.watchList.some((list) => list.id === movie.id)) {
           return state;
@@ -93,6 +113,22 @@ export const useMovieStore = create((set) => {
           watchListCount: state.watchListCount + 1,
         };
       });
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          console.error("User not logged in");
+          return;
+        }
+        // Reference to the user's watchList collection in Firestore
+        const watchListRef = doc(
+          collection(db, "users", user.uid, "watchList"),
+          movie.id.toString()
+        );
+        await setDoc(watchListRef, movie);
+        console.log("Movie added to Firestore watchList collection");
+      } catch (error) {
+        console.error("Error adding movie to Firestore:", error);
+      }
     },
   };
 });
