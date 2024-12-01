@@ -10,7 +10,6 @@ import {
   SignIn,
 } from "@clerk/nextjs";
 import SignInPage from "@/Components/SignInPage";
-import { app, auth } from "@/Config/Firebase";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

@@ -3,7 +3,7 @@
 import styles from "./page.module.css";
 import { Typography, Stack, Tab, Box } from "@mui/material";
 import { TabList, TabPanel, TabContext } from "@mui/lab";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Movies from "@/Components/Movies";
 import Watched from "@/Components/Watched";
 import WatchList from "@/Components/WatchList";
@@ -11,6 +11,8 @@ import Search from "@/Components/Search";
 import { useMovieStore } from "@/Store/movieStore";
 import SearchIcon from "@mui/icons-material/Search";
 import FirebaseAuthHandler from "@/Config/FirebaseAuthHandler";
+import { auth, db } from "@/Config/Firebase";
+import { doc, onSnapshot } from "firebase/firestore";
 
 export default function Home() {
   const [value, setValue] = useState("1");
@@ -19,7 +21,32 @@ export default function Home() {
     setValue(newValue);
   };
 
-  const { watchedCount, watchListCount } = useMovieStore();
+  const { watchedCount, watchListCount, setWatchedCount, setWatchListCount } =
+    useMovieStore();
+useEffect(() => {
+  const user = auth.currentUser;
+  if (!user) {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        const userDocRef = doc(db, "users", user.uid);
+        onSnapshot(userDocRef, (doc) => {
+          const userData = doc.data() || {};
+          setWatchedCount(userData.watchedCount || 0);
+          setWatchListCount(userData.watchListCount || 0);
+        });
+      }
+    });
+    return () => unsubscribe();
+  }
+
+  const userDocRef = doc(db, "users", user.uid);
+  const unsubscribe = onSnapshot(userDocRef, (doc) => {
+    const userData = doc.data() || {};
+    setWatchedCount(userData.watchedCount || 0);
+    setWatchListCount(userData.watchListCount || 0);
+  });
+  return () => unsubscribe();
+}, []);
 
   return (
     <>

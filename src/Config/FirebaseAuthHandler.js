@@ -12,7 +12,7 @@ const FirebaseAuthHandler = () => {
       if (!isSignedIn) return; // Only attempt auth if signed in
       try {
         const token = await getToken({ template: "integration_firebase" }); // Get the token from Clerk
-        console.log("Received token:", token); // Log the token
+        // console.log("Received token:", token); // Log the token
         if (!token) return; // Extra safety check
         const userCredential = await signInWithCustomToken(auth, token || ""); // Sign in with the token
 

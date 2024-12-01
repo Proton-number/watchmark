@@ -1,11 +1,43 @@
+"use client";
+
 import { useMovieStore } from "@/Store/movieStore";
 import { Box, Grid, Stack, Typography, Card, CardContent } from "@mui/material";
 import Image from "next/image";
-import React from "react";
+import { useEffect } from "react";
 import TheatersIcon from "@mui/icons-material/Theaters";
+import { auth, db } from "@/Config/Firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 export default function Watched() {
-  const { watchedMovies } = useMovieStore();
+  const { watchedMovies, setWatchedMovies } = useMovieStore();
+
+  useEffect(() => {
+    const getWatchedMovies = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          console.error("User not logged in");
+          return;
+        }
+
+        const watchedMoviesCollection = collection(
+          db,
+          "users",
+          user.uid,
+          "watchedMovies"
+        );
+
+        const querySnapshot = await getDocs(watchedMoviesCollection);
+        const movies = querySnapshot.docs.map((doc) => doc.data());
+
+        setWatchedMovies(movies);
+      } catch (error) {
+        console.error("Error fetching watched movies:", error);
+      }
+    };
+    getWatchedMovies();
+  }, [setWatchedMovies]);
+
   if (!watchedMovies || watchedMovies.length === 0) {
     return (
       <Stack
@@ -96,10 +128,17 @@ export default function Watched() {
                         <strong>{movie.title}</strong>
                       </Typography>
                       <Typography>
-                        {new Date(movie.release_date).getFullYear()}
+                        {movie.release_date
+                          ? new Date(movie.release_date).getFullYear()
+                          : "Unknown Year"}
                       </Typography>
                       <Typography>
-                        Watched: {new Date().toLocaleDateString("en-GB")}
+                        Watched:{" "}
+                        {movie.watchedDate
+                          ? new Date(movie.watchedDate).toLocaleDateString(
+                              "en-GB"
+                            )
+                          : new Date().toLocaleDateString("en-GB")}
                       </Typography>
                     </Stack>
                     <Typography>{movie.original_language}</Typography>
