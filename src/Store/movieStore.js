@@ -1,5 +1,12 @@
 import { db, auth } from "@/Config/Firebase";
-import { collection, doc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  setDoc,
+  deleteDoc,
+  deleteField,
+  updateDoc,
+} from "firebase/firestore";
 import { create } from "zustand";
 
 export const useMovieStore = create((set, get) => {
@@ -18,6 +25,7 @@ export const useMovieStore = create((set, get) => {
     setWatchList: (watchList) => set(() => ({ watchList })),
     watchListCount: 0,
     setWatchListCount: (watchListCount) => set(() => ({ watchListCount })),
+    watchedDate: "",
 
     fetchMovies: async (page = 1) => {
       try {
@@ -76,27 +84,24 @@ export const useMovieStore = create((set, get) => {
     },
 
     addtoWatched: async (movie) => {
-      const currentState = get();
-      set((state) => {
-        // ".some()" checks if watched.id === movie.id, and if it finds a match, it means the movie is already in the watchedMovies list, so it won't be added again.
-        if (
-          currentState.watchedMovies.some((watched) => watched.id === movie.id)
-        ) {
-          return state;
-          // Return the current state if movie is already watched
-        }
-        return {
-          watchedMovies: [...state.watchedMovies, movie],
-          // Add the movie to the watchedMovies list
-          watchedCount: state.watchedCount + 1,
-        };
-      });
       try {
         const user = auth.currentUser;
         if (!user) {
           console.error("User not logged in");
           return;
         }
+
+        set((state) => {
+          // ".some()" checks if watched.id === movie.id, and if it finds a match, it means the movie is already in the watchedMovies list, so it won't be added again.
+          if (state.watchedMovies.some((watched) => watched.id === movie.id)) {
+            return state; // Return the current state if movie is already watched
+          }
+          return {
+            watchedMovies: [...state.watchedMovies, movie],
+            // Add the movie to the watchedMovies list
+            watchedCount: state.watchedCount + 1,
+          };
+        });
 
         // Reference to the user's watchedMovies collection in Firestore
         const watchedMoviesRef = doc(
@@ -110,7 +115,7 @@ export const useMovieStore = create((set, get) => {
         await setDoc(
           userDocRef,
           {
-            watchedCount: currentState.watchedCount + 1,
+            watchedCount: get().watchedCount,
           },
           { merge: true }
         );
@@ -155,48 +160,6 @@ export const useMovieStore = create((set, get) => {
         console.log("Movie added to Firestore watchList collection");
       } catch (error) {
         console.error("Error adding movie to Firestore:", error);
-      }
-    },
-    removeFromWatchlist: async (movie) => {
-      const currentState = get();
-
-      if (!movie || !movie.id) {
-        console.error("Invalid movie object or missing id", movie);
-        return;
-      }
-
-      // Update the Zustand store state
-      set((state) => ({
-        watchList: state.watchList.filter((movies) => movies.id !== movie.id),
-        watchListCount: Math.max(state.watchListCount - 1, 0),
-      }));
-      try {
-        const user = auth.currentUser;
-        if (!user) {
-          console.error("User not logged in");
-          return;
-        }
-
-        // Reference to the user's watchList collection in Firestore
-        const watchListRef = doc(
-          collection(db, "users", user.uid, "watchList"),
-          movie.id.toString()
-        );
-        // Remove the document from Firestore
-        await setDoc(watchListRef, null, { merge: false });
-        // Update the user document with the new watchList count
-        const userDocRef = doc(db, "users", user.uid);
-        await setDoc(
-          userDocRef,
-          {
-            watchListCount: Math.max(currentState.watchListCount - 1, 0),
-          },
-          { merge: true }
-        );
-
-        console.log("Movie removed from Firestore watchList collection");
-      } catch (error) {
-        console.error("Error removing movie from Firestore:", error);
       }
     },
   };

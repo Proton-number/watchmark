@@ -1,9 +1,9 @@
 "use client";
 
 import { useMovieStore } from "@/Store/movieStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { auth, db } from "@/Config/Firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import Image from "next/image";
 import {
   Box,
@@ -12,41 +12,79 @@ import {
   Typography,
   Card,
   CardContent,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemText,
+  ListItemIcon,
   Button,
 } from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import MovieIcon from "@mui/icons-material/Movie";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 
 function WatchList() {
   const { watchList, setWatchList, addtoWatched, removeFromWatchlist } =
     useMovieStore();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const open = Boolean(anchorEl);
 
-  useEffect(() => {
-    const getWatchlist = async () => {
-      try {
-        const user = auth.currentUser;
-        if (!user) {
-          console.error("User not logged in");
-          return;
-        }
-        const watchListCollection = collection(
-          db,
-          "users",
-          user.uid,
-          "watchList"
-        );
-        const querySnapshot = await getDocs(watchListCollection);
-        const movies = querySnapshot.docs.map((doc) => doc.data());
-        setWatchList(movies);
-      } catch (error) {
-        console.error("Error fetching watched movies:", error);
-      }
-    };
-    getWatchlist();
-  }, [setWatchList]);
+  const handleClick = (event, movie) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedMovie(movie);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setSelectedMovie(null);
+  };
+
+  const handleAddToWatched = () => {
+    if (selectedMovie) {
+      addtoWatched(selectedMovie);
+      handleClose();
+    }
+  };
+
+  const handleRemoveFromWatchlist = () => {
+    if (selectedMovie) {
+      removeFromWatchlist(selectedMovie.id);
+      handleClose();
+    }
+  };
 
   if (!watchList || watchList.length === 0) {
-    return <div>Your watchlist is empty. Search for movies to add!</div>;
+    return (
+      <Stack
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "50vh",
+        }}
+        spacing={2}
+      >
+        <Box
+          sx={{
+            backgroundColor: "#f3f4f6",
+            padding: "10px",
+            borderRadius: "50%",
+          }}
+        >
+          <MovieIcon sx={{ fontSize: 35 }} />
+        </Box>
+        <Typography variant="h5">Your Watchlist is Empty</Typography>
+        <Typography
+          sx={{ maxWidth: "400px", textAlign: "Center", opacity: "60%" }}
+        >
+          {" "}
+          Looks like you haven't added any movies to your watchlist yet. Start
+          exploring and adding films you want to watch!
+        </Typography>
+      </Stack>
+    );
   }
 
   return (
@@ -97,45 +135,60 @@ function WatchList() {
                     flexGrow: 1, // Fills the vertical space
                   }}
                 >
-                  <Typography variant="h5">
-                    {" "}
-                    <strong>{movie.title}</strong>
-                  </Typography>
                   <Stack
                     direction="row"
-                    spacing={2}
-                    sx={{ p: 2, justifyContent: "center" }}
+                    sx={{
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
                   >
-                    <Button
-                      startIcon={<AccessTimeIcon />}
-                      variant="contained"
-                      sx={{
-                        textTransform: "none",
-                        backgroundColor: "#050708",
-                        "&:hover": {
-                          backgroundColor: "#282f3c",
-                        },
-                        width: "fit-content",
-                      }}
-                      onClick={() => addtoWatched(movie)}
-                    >
-                      Watched
-                    </Button>
-                    <Button
-                      startIcon={<RemoveCircleOutlineIcon />}
-                      onClick={() => removeFromWatchlist(movie)}
-                      variant="contained"
-                      sx={{
-                        textTransform: "none",
-                        backgroundColor: "#ffffff",
-                        color: "#050708",
-                        "&:hover": {
-                          backgroundColor: "#f3f4f6",
-                        },
-                      }}
-                    >
-                      Remove
-                    </Button>
+                    <Typography variant="h5">
+                      {" "}
+                      <strong>{movie.title}</strong>
+                    </Typography>
+
+                    <Box>
+                      <IconButton
+                        id="demo-positioned-button"
+                        aria-controls={
+                          open ? "demo-positioned-menu" : undefined
+                        }
+                        aria-haspopup="true"
+                        aria-expanded={open ? "true" : undefined}
+                        onClick={(event) => handleClick(event, movie)}
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
+                      <Menu
+                        elevation={5}
+                        id="demo-positioned-menu"
+                        aria-labelledby="demo-positioned-button"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "left",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "left",
+                        }}
+                      >
+                        <MenuItem onClick={handleAddToWatched}>
+                          <ListItemIcon>
+                            <AccessTimeIcon sx={{ color: "black" }} />
+                          </ListItemIcon>
+                          <ListItemText>Add to watched</ListItemText>
+                        </MenuItem>
+                        <MenuItem onClick={handleRemoveFromWatchlist}>
+                          <ListItemIcon>
+                            <RemoveCircleOutlineIcon sx={{ color: "red" }} />
+                          </ListItemIcon>
+                          <ListItemText>Remove</ListItemText>
+                        </MenuItem>
+                      </Menu>
+                    </Box>
                   </Stack>
                 </CardContent>
               </Card>

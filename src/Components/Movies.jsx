@@ -124,9 +124,12 @@ function Movies() {
                   </Link>
                 </CardContent>
                 <Stack
-                  direction="row"
-                  spacing={2}
-                  sx={{ p: 2, justifyContent: "center" }}
+                  direction={{ sm: "row" }}
+                  spacing={{ xs: 3, sm: 2 }}
+                  sx={{
+                    p: { xs: 2, sm: 2 },
+                    justifyContent: "center",
+                  }}
                 >
                   <Button
                     startIcon={<AccessTimeIcon />}
