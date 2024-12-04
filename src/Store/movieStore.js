@@ -1,12 +1,5 @@
 import { db, auth } from "@/Config/Firebase";
-import {
-  collection,
-  doc,
-  setDoc,
-  deleteDoc,
-  deleteField,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, doc, setDoc, deleteDoc } from "firebase/firestore";
 import { create } from "zustand";
 
 export const useMovieStore = create((set, get) => {
@@ -160,6 +153,56 @@ export const useMovieStore = create((set, get) => {
         console.log("Movie added to Firestore watchList collection");
       } catch (error) {
         console.error("Error adding movie to Firestore:", error);
+      }
+    },
+
+    removeFromWatchlist: async (movie) => {
+      const currentState = get();
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          console.error("User not logged in");
+          return;
+        }
+
+        // First, update the local state
+        set((state) => ({
+          watchList: state.watchList.filter((list) => list.id !== movie.id),
+          watchListCount: Math.max(0, state.watchListCount - 1), // Prevent negative counts
+        }));
+
+        // Reference to the specific movie document in the watchList collection
+
+        const movieRef = doc(
+          db,
+          "users",
+          user.uid,
+          "watchList",
+          movie.id.toString() // Use toString () to convert the ID to a string
+        );
+
+        // Delete the document from Firestore
+        await deleteDoc(movieRef);
+
+        // Create or update the user document with the new watched count
+        const userDocRef = doc(db, "users", user.uid);
+        await setDoc(
+          userDocRef,
+          {
+            watchListCount: Math.max(0, currentState.watchListCount - 1),
+          },
+          { merge: true } //merge the new data with the existing data without deleting the entire thing
+        );
+
+        console.log(`Movie ${movie.id} removed from watchlist`);
+      } catch (error) {
+        console.error("Error removing movie from watchlist:", error);
+
+        // Optionally, revert the state change if the Firestore delete fails
+        // set((state) => ({
+        //   watchList: [...state.watchList, movie],
+        //   watchListCount: state.watchListCount + 1,
+        // }));
       }
     },
   };

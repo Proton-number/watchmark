@@ -8,30 +8,3 @@
 
   font-family: var(--font-geist-sans);
 }
-
-
-#desktopNav{
-  display: none;
-}
-
-
-#mobileNav{
-  display: block;
-  }
-
-
-
-@media screen and (min-width:600px) {
-    
-  #desktopNav{
-      display: block;
-  }
-
-  #mobileNav{
-  display: none;
-  }
-  
-
-}
-
-

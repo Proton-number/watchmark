@@ -23,43 +23,40 @@ export default function Home() {
 
   const { watchedCount, watchListCount, setWatchedCount, setWatchListCount } =
     useMovieStore();
-useEffect(() => {
-  const user = auth.currentUser;
-  if (!user) {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        const userDocRef = doc(db, "users", user.uid);
-        onSnapshot(userDocRef, (doc) => {
-          const userData = doc.data() || {};
-          setWatchedCount(userData.watchedCount || 0);
-          setWatchListCount(userData.watchListCount || 0);
-        });
-      }
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        if (user) {
+          const userDocRef = doc(db, "users", user.uid);
+          onSnapshot(userDocRef, (doc) => {
+            const userData = doc.data() || {};
+            setWatchedCount(userData.watchedCount || 0);
+            setWatchListCount(userData.watchListCount || 0);
+          });
+        }
+      });
+      return () => unsubscribe();
+    }
+
+    const userDocRef = doc(db, "users", user.uid);
+    const unsubscribe = onSnapshot(userDocRef, (doc) => {
+      const userData = doc.data() || {};
+      setWatchedCount(userData.watchedCount || 0);
+      setWatchListCount(userData.watchListCount || 0);
     });
     return () => unsubscribe();
-  }
-
-  const userDocRef = doc(db, "users", user.uid);
-  const unsubscribe = onSnapshot(userDocRef, (doc) => {
-    const userData = doc.data() || {};
-    setWatchedCount(userData.watchedCount || 0);
-    setWatchListCount(userData.watchListCount || 0);
-  });
-  return () => unsubscribe();
-}, []);
+  }, []);
 
   return (
     <>
       <Stack
         spacing={2}
         sx={{
-          padding: "30px",
+          padding: { xs: "14px", sm: "30px" },
         }}
       >
-        <Box sx={{ paddingTop: { sm: "50px" } }}>
-          <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-            WatchMark
-          </Typography>
+        <Box sx={{ paddingTop: { xs: "70px", sm: "80px" } }}>
           <Box sx={{ width: "100%" }}>
             <TabContext value={value}>
               <Box

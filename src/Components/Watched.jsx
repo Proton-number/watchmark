@@ -6,14 +6,8 @@ import Image from "next/image";
 import { useEffect } from "react";
 import TheatersIcon from "@mui/icons-material/Theaters";
 import { auth, db } from "@/Config/Firebase";
-import {
-  collection,
-  getDocs,
-  orderBy,
-  query,
-  serverTimestamp,
-  setDoc,
-} from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
+import FloatingButton from "./FloatingButton";
 
 export default function Watched() {
   const { watchedMovies, setWatchedMovies } = useMovieStore();
@@ -34,12 +28,12 @@ export default function Watched() {
           "watchedMovies"
         );
 
-        const watchedMoviesQuery = query(
-          watchedMoviesCollection,
-          orderBy("id", "desc")
-        );
+        // const watchedMoviesQuery = query(
+        //   watchedMoviesCollection,
+        //   orderBy("id", "desc")
+        // );
 
-        const querySnapshot = await getDocs(watchedMoviesQuery);
+        const querySnapshot = await getDocs(watchedMoviesCollection);
         const movies = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -164,6 +158,7 @@ export default function Watched() {
           );
         })}
       </Grid>
+      <FloatingButton />
     </Box>
   );
 }

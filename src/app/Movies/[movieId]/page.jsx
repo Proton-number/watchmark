@@ -65,11 +65,12 @@ function page() {
   return (
     <Container
       sx={{
-        padding: { xs: "50px" },
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
+        paddingTop: { xs: "80px", sm: 0 },
+        paddingBottom: { xs: "80px", sm: 0 },
       }}
     >
       <Paper sx={{ padding: { xs: "40px", sm: "50px" } }} elevation={4}>

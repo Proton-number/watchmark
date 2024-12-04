@@ -3,7 +3,7 @@
 import { useMovieStore } from "@/Store/movieStore";
 import { useEffect, useState } from "react";
 import { auth, db } from "@/Config/Firebase";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import Image from "next/image";
 import {
   Box,
@@ -17,12 +17,12 @@ import {
   MenuItem,
   ListItemText,
   ListItemIcon,
-  Button,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import MovieIcon from "@mui/icons-material/Movie";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import FloatingButton from "./FloatingButton";
 
 function WatchList() {
   const { watchList, setWatchList, addtoWatched, removeFromWatchlist } =
@@ -50,10 +50,33 @@ function WatchList() {
 
   const handleRemoveFromWatchlist = () => {
     if (selectedMovie) {
-      removeFromWatchlist(selectedMovie.id);
+      removeFromWatchlist(selectedMovie);
       handleClose();
     }
   };
+  useEffect(() => {
+    const getWatchlist = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          console.error("User not logged in");
+          return;
+        }
+        const watchListCollection = collection(
+          db,
+          "users",
+          user.uid,
+          "watchList"
+        );
+        const querySnapshot = await getDocs(watchListCollection);
+        const movies = querySnapshot.docs.map((doc) => doc.data());
+        setWatchList(movies);
+      } catch (error) {
+        console.error("Error fetching watched movies:", error);
+      }
+    };
+    getWatchlist();
+  }, [setWatchList]);
 
   if (!watchList || watchList.length === 0) {
     return (
@@ -196,6 +219,7 @@ function WatchList() {
           );
         })}
       </Grid>
+      <FloatingButton />
     </Box>
   );
 }

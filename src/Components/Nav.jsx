@@ -5,9 +5,18 @@ import { UserButton } from "@clerk/nextjs";
 
 function Nav() {
   return (
-    <AppBar id="desktopNav" sx={{ backgroundColor: "black", color: "white" }}>
+    <AppBar
+      id="desktopNav"
+      sx={{
+        backgroundColor: "black",
+        color: "white",
+        p: "4px",
+      }}
+    >
       <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Typography>Watchmark</Typography>
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          Watchmark
+        </Typography>
         <UserButton showName />
       </Toolbar>
     </AppBar>

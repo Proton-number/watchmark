@@ -15,6 +15,7 @@ import Link from "next/link";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AddIcon from "@mui/icons-material/Add";
 import { motion } from "framer-motion";
+import FloatingButton from "./FloatingButton";
 
 function Movies() {
   const { fetchMovies, movies, page, hasMore, addtoWatched, addToWatchList } =
@@ -183,6 +184,7 @@ function Movies() {
           {isLoadingMore ? "Loading..." : "Load More"}
         </Button>
       )}
+      <FloatingButton />
     </Box>
   );
 }
