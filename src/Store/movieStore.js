@@ -197,12 +197,48 @@ export const useMovieStore = create((set, get) => {
         console.log(`Movie ${movie.id} removed from watchlist`);
       } catch (error) {
         console.error("Error removing movie from watchlist:", error);
+      }
+    },
+    removeFromWatched: async (movie) => {
+      const currentState = get();
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          console.error("User not logged in");
+          return;
+        }
+        // First, update the local state
+        set((state) => ({
+          watchedMovies: state.watchedMovies.filter(
+            (list) => list.id !== movie.id
+          ),
+          watchedCount: Math.max(0, state.watchedCount - 1), // Prevent negative counts
+        }));
 
-        // Optionally, revert the state change if the Firestore delete fails
-        // set((state) => ({
-        //   watchList: [...state.watchList, movie],
-        //   watchListCount: state.watchListCount + 1,
-        // }));
+        // Reference to the specific movie document in the watchList collection
+
+        const movieRef = doc(
+          db,
+          "users",
+          user.uid,
+          "watchedMovies",
+          movie.id.toString() // Use toString () to convert the ID to a string
+        );
+        // Delete the document from Firestore
+        await deleteDoc(movieRef);
+        // Create or update the user document with the new watched count
+        const userDocRef = doc(db, "users", user.uid);
+        await setDoc(
+          userDocRef,
+          {
+            watchedCount: Math.max(0, currentState.watchedCount - 1),
+          },
+          { merge: true } //merge the new data with the existing data without deleting the entire thing
+        );
+
+        console.log(`Movie ${movie.id} removed from watchedMovies`);
+      } catch (error) {
+        console.error("Error removing movie from watchedMovies:", error);
       }
     },
   };

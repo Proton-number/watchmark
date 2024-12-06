@@ -1,26 +1,9 @@
-import localFont from "next/font/local";
 import "./globals.css";
 import Nav from "@/Components/Nav";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-  SignIn,
-} from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import SignInPage from "@/Components/SignInPage";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import { ThemeProvider } from "@mui/material";
+import { theme } from "@/Components/theme";
 
 export const metadata = {
   title: "WatchMark",
@@ -31,16 +14,18 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
-          <SignedOut>
-            <SignInPage />
-          </SignedOut>
+        <body>
+          <ThemeProvider theme={theme}>
+            <SignedOut>
+              <SignInPage />
+            </SignedOut>
 
-          <SignedIn>
-            {" "}
-            <Nav />
-            {children}
-          </SignedIn>
+            <SignedIn>
+              {" "}
+              <Nav />
+              {children}
+            </SignedIn>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

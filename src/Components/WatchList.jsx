@@ -23,6 +23,8 @@ import MovieIcon from "@mui/icons-material/Movie";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import FloatingButton from "./FloatingButton";
+import Loading from "@/Loaders/Loading";
+import Link from "next/link";
 
 function WatchList() {
   const { watchList, setWatchList, addtoWatched, removeFromWatchlist } =
@@ -30,6 +32,7 @@ function WatchList() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const open = Boolean(anchorEl);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleClick = (event, movie) => {
     setAnchorEl(event.currentTarget);
@@ -71,12 +74,29 @@ function WatchList() {
         const querySnapshot = await getDocs(watchListCollection);
         const movies = querySnapshot.docs.map((doc) => doc.data());
         setWatchList(movies);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching watched movies:", error);
+        setIsLoading(false);
       }
     };
     getWatchlist();
   }, [setWatchList]);
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "60vh",
+        }}
+      >
+        <Loading />
+      </Box>
+    );
+  }
 
   if (!watchList || watchList.length === 0) {
     return (
@@ -134,25 +154,48 @@ function WatchList() {
                 }}
               >
                 {" "}
-                <Box
-                  sx={{
-                    position: "relative",
-                    width: "100%",
-                    paddingTop: "150%", // Maintain aspect ratio for images
+                <Link
+                  href={`/Movies/${movie.id}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "inherit",
                   }}
                 >
-                  <Image
-                    src={posterUrl}
-                    priority
-                    alt={movie.title || "No title"}
-                    fill // Fills the container
-                    sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw" // Responsive sizing
-                    style={{
-                      objectFit: "cover",
-                      borderRadius: "4px 4px 0 0", // Rounded corners for the image
+                  <Box
+                    sx={{
+                      position: "relative",
+                      width: "100%",
+                      paddingTop: "150%", // Maintain aspect ratio for images
                     }}
-                  />
-                </Box>
+                  >
+                    <Image
+                      src={posterUrl}
+                      priority
+                      alt={movie.title || "No title"}
+                      fill // Fills the container
+                      sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw" // Responsive sizing
+                      style={{
+                        objectFit: "cover",
+                        borderRadius: "4px 4px 0 0", // Rounded corners for the image
+                      }}
+                    />
+                    <Box
+                      position="absolute"
+                      sx={{
+                        backgroundColor: "black",
+                        padding: "4px",
+                        top: "18px",
+                        right: "18px",
+                        color: "white",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <Typography variant="body2">
+                        {new Date(movie.release_date).getFullYear()}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Link>
                 <CardContent
                   sx={{
                     flexGrow: 1, // Fills the vertical space
@@ -183,7 +226,7 @@ function WatchList() {
                         <MoreVertIcon />
                       </IconButton>
                       <Menu
-                        elevation={5}
+                        elevation={2}
                         id="demo-positioned-menu"
                         aria-labelledby="demo-positioned-button"
                         anchorEl={anchorEl}

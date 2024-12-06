@@ -14,8 +14,8 @@ import Image from "next/image";
 import Link from "next/link";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AddIcon from "@mui/icons-material/Add";
-import { motion } from "framer-motion";
 import FloatingButton from "./FloatingButton";
+import Loading from "@/Loaders/Loading";
 
 function Movies() {
   const { fetchMovies, movies, page, hasMore, addtoWatched, addToWatchList } =
@@ -50,7 +50,18 @@ function Movies() {
   };
 
   if (isLoading) {
-    return <div>Loading movies...</div>;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "50vh",
+        }}
+      >
+        <Loading />
+      </Box>
+    );
   }
 
   if (!movies || movies.length === 0) {
@@ -81,40 +92,59 @@ function Movies() {
                   flexDirection: "column", // Arrange children vertically
                 }}
               >
-                <Box
-                  sx={{
-                    position: "relative",
-                    width: "100%",
-                    paddingTop: "150%", // Maintain aspect ratio for images
+                <Link
+                  href={`/Movies/${movie.id}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "inherit",
                   }}
                 >
-                  <Image
-                    src={posterUrl}
-                    priority
-                    alt={movie.title || "No title"}
-                    fill // Fills the container
-                    sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw" // Responsive sizing
-                    style={{
-                      objectFit: "cover",
-                      borderRadius: "4px 4px 0 0", // Rounded corners for the image
+                  <Box
+                    sx={{
+                      position: "relative",
+                      width: "100%",
+                      paddingTop: "150%", // Maintain aspect ratio for images
                     }}
-                  />
-                </Box>
+                  >
+                    <Image
+                      src={posterUrl}
+                      priority
+                      alt={movie.title || "No title"}
+                      fill // Fills the container
+                      sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw" // Responsive sizing
+                      style={{
+                        objectFit: "cover",
+                        borderRadius: "4px 4px 0 0", // Rounded corners for the image
+                      }}
+                    />
+                    <Box
+                      position="absolute"
+                      sx={{
+                        backgroundColor: "black",
+                        padding: "4px",
+                        top: "18px",
+                        right: "18px",
+                        color: "white",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <Typography variant="body2">
+                        {new Date(movie.release_date).getFullYear()}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Link>
+
                 <CardContent
                   sx={{
                     flexGrow: 1, // Fills the vertical space
                   }}
                 >
-                  <Link
-                    href={`/Movies/${movie.id}`}
-                    style={{
-                      textDecoration: "none",
-                      color: "inherit",
-                    }}
-                  >
-                    <Typography variant="h5">
-                      <strong> {movie.title || "Untitled"}</strong>
-                    </Typography>
+                  <Typography variant="h5">
+                    <strong> {movie.title || "Untitled"}</strong>
+                  </Typography>
+                  <Stack spacing={3}>
+                    {" "}
                     <Typography
                       variant="body2"
                       color="text.secondary"
@@ -122,7 +152,7 @@ function Movies() {
                     >
                       Language: {movie.original_language}
                     </Typography>
-                  </Link>
+                  </Stack>
                 </CardContent>
                 <Stack
                   direction={{ sm: "row" }}
